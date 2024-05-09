@@ -238,7 +238,6 @@ parts:
     - fix-pkgconfig-files
     plugin: meson
     source: https://download.gimp.org/pub/babl/0.1/babl-0.1.92.tar.xz
-    source-checksum: sha256/f667735028944b6375ad18f160a64ceb93f5c7dccaa9d8751de359777488a2c1
     meson-parameters:
     - --prefix=/usr
     - --buildtype=release
@@ -298,7 +297,6 @@ parts:
     - babl
     - fix-pkgconfig-files
     source: https://download.gimp.org/pub/gegl/0.4/gegl-0.4.38.tar.xz
-    source-checksum: sha256/e4a33c8430a5042fba8439b595348e71870f0d95fbf885ff553f9020c1bed750
     plugin: meson
     meson-parameters:
     - --prefix=/usr
@@ -554,7 +552,6 @@ parts:
     - fix-pkgconfig-files
     plugin: autotools
     source: https://github.com/mypaint/libmypaint/releases/download/v1.6.1/libmypaint-1.6.1.tar.xz
-    source-checksum: sha256/741754f293f6b7668f941506da07cd7725629a793108bb31633fb6c3eae5315f
     build-packages:
     - gobject-introspection
     - intltool
@@ -610,7 +607,6 @@ parts:
   #   after: [gimp]
   #   plugin: autotools
   #   source: https://download.gimp.org/mirror/pub/gimp/help/gimp-help-2.10.0.tar.bz2
-  #   source-checksum: sha512/2f6d5e7cf0c3b4960c92074ef02d51a1d089c148f6453a66e453a3084cdede280f72c6b77d35f66777adbda8aa273ec2a472fb538142e51bb263c3077eec473a
   #   autotools-configure-parameters:
   #   - --prefix=/usr
   #   build-environment:
@@ -639,7 +635,6 @@ parts:
     - mypaint-brushes
     plugin: autotools
     source: https://download.gimp.org/pub/gimp/v2.10/gimp-$SNAPCRAFT_PROJECT_VERSION.tar.bz2
-    source-checksum: sha512/dbe6152ea6ff99cca59bbf2c88a64fb4ff6b529d98ace7723eadf5dfb0e10d9cbaf2de1e0d5251e9ecf9abca73da9ae1a501f229997802fd4077fb9594f4ba66
     autotools-configure-parameters:
     - --prefix=/usr
     - --sysconfdir=/etc
@@ -938,7 +933,6 @@ parts:
   # darktable:
   #   after: [gimp, gmic]
   #   source: https://github.com/darktable-org/darktable/releases/download/release-3.0.2/darktable-3.0.2.tar.xz
-  #   source-checksum: sha256/6abaf661fe9414e92bdb33b58b98ef024ccf6132b7876abaf0751ec2109f36fb
   #   plugin: cmake
   #   override-pull: |
   #     snapcraftctl pull
