@@ -27,8 +27,6 @@ layout:
     bind: $SNAP/usr/lib/$CRAFT_ARCH_TRIPLET_BUILD_FOR/babl-0.1
   /usr/lib/$CRAFT_ARCH_TRIPLET_BUILD_FOR/gegl-0.4:
     bind: $SNAP/usr/lib/$CRAFT_ARCH_TRIPLET_BUILD_FOR/gegl-0.4
-  /usr/lib/$CRAFT_ARCH_TRIPLET_BUILD_FOR/evince/4/backends:
-    bind: $SNAP/usr/lib/$CRAFT_ARCH_TRIPLET_BUILD_FOR/evince/4/backends
   /usr/lib/gvfs:
     bind: $SNAP/usr/lib/gvfs
   /usr/lib/$CRAFT_ARCH_TRIPLET_BUILD_FOR/gvfs:
@@ -345,44 +343,11 @@ parts:
       - libstemmer0d
       - libyaml-0-2
 
-  # https://gitlab.gnome.org/GNOME/evince
-  evince:
-    source: https://gitlab.gnome.org/GNOME/evince.git
-    source-type: git
-    source-branch: "gnome-42"
-    plugin: meson
-    build-environment:
-      - CFLAGS: -Ofast -g -pipe -flto
-      - CXXFLAGS: -Ofast -g -pipe -flto
-      - LDFLAGS: -flto
-    meson-parameters:
-      - --prefix=/snap/$SNAPCRAFT_PROJECT_NAME/current/usr
-      - --buildtype=release
-      - -Dnautilus=false
-      - -Dgtk_doc=false
-      - -Dintrospection=false
-    organize:
-      snap/$SNAPCRAFT_PROJECT_NAME/current/usr: usr
-    build-packages:
-      - autotools-dev
-      - dh-apparmor
-      - intltool
-      - libarchive-dev
-      - libdjvulibre-dev
-      - libkpathsea-dev
-      - libsm-dev
-    stage-packages:
-      - libarchive13
-      - libdjvulibre21
-      - libkpathsea6
-      - libnspr4
-
   # https://download.gimp.org/pub/gimp/v2.10/
   gimp:
     after:
       - appstream-glib
       - babl
-      - evince
       - gegl
       - gexiv
       - libheif
