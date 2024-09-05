@@ -402,29 +402,6 @@ parts:
       make DESTDIR=$CRAFT_PART_INSTALL install
       make DESTDIR=$CRAFT_PART_INSTALL soinstall
 
-  # https://github.com/caolanm/libwmf
-  libwmf:
-    after: [ghostscript]
-    plugin: autotools
-    source: https://github.com/caolanm/libwmf/archive/refs/tags/v0.2.12.tar.gz
-    override-pull: |
-      craftctl default
-      patch -Np1 -i $CRAFT_PROJECT_DIR/snap/local/patches/libwmf/no-trio.patch
-      patch -Np1 -i $CRAFT_PROJECT_DIR/snap/local/patches/libwmf/freetype-pkg-config.patch
-      autoreconf --force --install --include=patches
-    autotools-configure-parameters:
-      - --prefix=/usr
-      - --with-gsfontmap=/usr/share/ghostscript/9.56.1/Resource/Init/Fontmap.GS
-    build-environment:
-      - CFLAGS: -Ofast -g -pipe -flto
-      - CXXFLAGS: -Ofast -g -pipe -flto
-      - LDFLAGS: -flto
-    override-build: |
-      craftctl default
-      sed -i "s|/usr/lib/libwmflite.la|$CRAFT_STAGE/usr/lib/libwmflite.la|" $CRAFT_PART_INSTALL/usr/lib/libwmf.la
-    stage-packages:
-      - libexpat1
-
   # https://download.gimp.org/pub/gimp/v2.10/
   gimp:
     after:
@@ -436,7 +413,6 @@ parts:
       - ghostscript
       - libheif
       - libmypaint
-      - libwmf
       - mypaint-brushes
     plugin: meson
     source: https://gitlab.gnome.org/GNOME/gimp.git
@@ -517,6 +493,7 @@ parts:
       - libwebp7
       - libwebpdemux2
       - libwebpmux3
+      - libwmf-0.2-7
       - libxmu6
       - libxpm4
       - libxv1
