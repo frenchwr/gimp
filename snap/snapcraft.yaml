@@ -319,34 +319,9 @@ parts:
     build-packages:
       - automake
 
-  # https://github.com/hughsie/appstream-glib
-  appstream-glib:
-    plugin: meson
-    source: https://github.com/hughsie/appstream-glib.git
-    build-environment:
-      - CFLAGS: -Ofast -g -pipe
-      - CXXFLAGS: -Ofast -g -pipe
-    meson-parameters:
-      - --prefix=/usr
-      - --buildtype=release
-      - -Db_lto=true
-      - -Dbuilder=false
-      - -Drpm=false
-      - -Dman=false
-    build-packages:
-      - gperf
-      - libarchive-dev
-      - libstemmer-dev
-      - libyaml-dev
-    stage-packages:
-      - libarchive13
-      - libstemmer0d
-      - libyaml-0-2
-
   # https://download.gimp.org/pub/gimp/v2.10/
   gimp:
     after:
-      - appstream-glib
       - babl
       - gegl
       - gexiv
@@ -390,6 +365,7 @@ parts:
       - intltool
       - iso-codes
       - libaa1-dev
+      - libappstream-glib-dev
       - libart-2.0-dev
       - libbz2-dev
       - libexif-dev
@@ -417,6 +393,7 @@ parts:
       - ghostscript
       - iso-codes
       - libaa1
+      - libappstream-glib8
       - libart-2.0-2
       - libbz2-1.0
       - libexif12
