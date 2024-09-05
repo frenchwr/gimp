@@ -39,8 +39,6 @@ layout:
     bind: $SNAP/usr/libexec
   /usr/share/color:
     bind: $SNAP/usr/share/color
-  /usr/share/ghostscript:
-    bind: $SNAP/usr/share/ghostscript
   /usr/share/gvfs:
     bind: $SNAP/usr/share/gvfs
   /usr/share/lensfun:
@@ -185,7 +183,6 @@ parts:
     after:
       - babl
       - gexiv
-      - ghostscript
       - libav
     source: https://gitlab.gnome.org/GNOME/gegl.git
     # source: https://download.gimp.org/pub/gegl/0.4/gegl-0.4.36.tar.xz
@@ -380,28 +377,6 @@ parts:
       - libkpathsea6
       - libnspr4
 
-  # https://github.com/ArtifexSoftware/ghostpdl-downloads
-  ghostscript:
-    plugin: autotools
-    source: https://github.com/ArtifexSoftware/ghostpdl-downloads/releases/download/gs9561/ghostscript-9.56.1.tar.xz
-    build-environment:
-      - CFLAGS: -Ofast -g -pipe -flto
-      - CXXFLAGS: -Ofast -g -pipe -flto
-      - LDFLAGS: -flto
-    autotools-configure-parameters:
-      - --prefix=/usr
-      - --disable-compile-inits
-      - --enable-dynamic
-    override-build: |
-      ./configure \
-        --prefix=/usr \
-        --disable-compile-inits \
-        --enable-dynamic
-      make -j$CRAFT_PARALLEL_BUILD_COUNT
-      make -j$CRAFT_PARALLEL_BUILD_COUNT so
-      make DESTDIR=$CRAFT_PART_INSTALL install
-      make DESTDIR=$CRAFT_PART_INSTALL soinstall
-
   # https://download.gimp.org/pub/gimp/v2.10/
   gimp:
     after:
@@ -410,7 +385,6 @@ parts:
       - evince
       - gegl
       - gexiv
-      - ghostscript
       - libheif
       - libmypaint
       - mypaint-brushes
@@ -475,6 +449,7 @@ parts:
       - xdg-utils
       - xsltproc
     stage-packages:
+      - ghostscript
       - iso-codes
       - libaa1
       - libart-2.0-2
