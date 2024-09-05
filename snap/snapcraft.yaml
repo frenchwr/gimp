@@ -77,16 +77,10 @@ apps:
     plugs:
       - cups-control
       - browser-support
-      - desktop
-      - desktop-legacy
-      - gsettings
       - home
       - network
-      - opengl
       - removable-media
       - unity7
-      - wayland
-      - x11
 
 parts:
   gexiv:
