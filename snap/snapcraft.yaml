@@ -1,5 +1,5 @@
 name: gimp
-version: 2.99.18
+version: 2.99.19
 summary: GNU Image Manipulation Program
 description: |
   Whether you are a graphic designer, photographer, illustrator, or scientist,
@@ -477,7 +477,13 @@ parts:
       - mypaint-brushes
       - rawtherapee
     plugin: meson
-    source: https://download.gimp.org/gimp/v2.99/gimp-${SNAPCRAFT_PROJECT_VERSION}.tar.xz
+    source: https://gitlab.gnome.org/GNOME/gimp.git
+    override-pull: |
+      # TODO: remove `craftctl default` and use this when 2.99.19 actually releases
+      #   tag="$(echo "GIMP_${SNAPCRAFT_PROJECT_VERSION}" | tr "." "_")"
+      #   git clone -b "$tag" https://gitlab.gnome.org/GNOME/gimp.git
+      craftctl default
+      sed -i 's|^Icon=.*|Icon=/usr/share/icons/hicolor/256x256/apps/gimp.png|' desktop/gimp.desktop.in.in
     meson-parameters:
       - --prefix=/usr
       - --buildtype=release
@@ -486,7 +492,6 @@ parts:
       - -Dbuild-id=org.gimp.GIMP.snapcraft.preview
       - -Dbug-report-url=https://github.com/snapcrafters/gimp/issues/
       - -Dcheck-update=no
-      - -Dpython=enabled
       - -Denable-default-bin=enabled
       - -Drelocatable-bundle=yes
       - -Dlibunwind=true
@@ -496,21 +501,13 @@ parts:
       - LDFLAGS: -flto
       - BABL_PATH: $CRAFT_STAGE/usr/lib/$CRAFT_ARCH_TRIPLET_BUILD_FOR/babl-0.1
       - GEGL_PATH: $CRAFT_STAGE/usr/lib/$CRAFT_ARCH_TRIPLET_BUILD_FOR/gegl-0.4
+      - GI_TYPELIB_PATH: $CRAFT_STAGE/usr/lib/$CRAFT_ARCH_TRIPLET_BUILD_FOR/girepository-1.0
       # the LIBRARY_PATH is to fix ld unable to find libwmf
       - LIBRARY_PATH: $CRAFT_STAGE/usr/lib
       # the LD_LIBRARY_PATH is to fix configure failing to test for gegl matting-levin support
-      - LD_LIBRARY_PATH: $LD_LIBRARY_PATH:$CRAFT_STAGE/usr/lib/$CRAFT_ARCH_TRIPLET_BUILD_FOR
+      - LD_LIBRARY_PATH: $LD_LIBRARY_PATH:$CRAFT_STAGE/usr/lib:$CRAFT_STAGE/usr/lib/$CRAFT_ARCH_TRIPLET_BUILD_FOR
       - GIO_MODULE_DIR: /snap/gnome-42-2204-sdk/current/usr/lib/$CRAFT_ARCH_TRIPLET_BUILD_FOR/gio/modules
       - PYTHON: /usr/bin/python3.10
-    override-pull: |
-      craftctl default
-      sed -i 's|^Icon=.*|Icon=/usr/share/icons/hicolor/256x256/apps/gimp.png|' desktop/gimp.desktop.in.in
-      # TODO: Drop this on next release.
-      # See: https://gitlab.gnome.org/GNOME/gimp/-/commit/11892f1d83ffc465346dab7e2e8c6e790f555a64
-      patch -Np1 -i $CRAFT_PROJECT_DIR/snap/local/patches/gimpchoice-fix.patch
-    override-build: |
-      craftctl default
-      sed -i -E 's|^# \(mypaint-brush-path .*$|(mypaint-brush-path "/usr/share/mypaint-data/1.0/brushes:~/.mypaint/brushes")|' $CRAFT_PART_INSTALL/etc/gimp/2.99/gimprc
     build-packages:
       - automake
       - intltool
