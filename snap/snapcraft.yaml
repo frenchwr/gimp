@@ -390,6 +390,7 @@ parts:
       - xdg-utils
       - xsltproc
     stage-packages:
+      - evince
       - ghostscript
       - iso-codes
       - libaa1
