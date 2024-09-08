@@ -1,5 +1,5 @@
 name: gimp
-version: 2.99.18
+version: 2.99.19-dev
 summary: GNU Image Manipulation Program
 description: |
   Whether you are a graphic designer, photographer, illustrator, or scientist,
@@ -9,48 +9,22 @@ description: |
 
 grade: stable
 confinement: strict
-base: core22
+base: core24
 compression: lzo
 
-architectures:
-  - build-on: amd64
-  - build-on: arm64
+platforms:
+  arm64:
+  amd64:
 
 layout:
   /etc/gimp:
     bind: $SNAP/etc/gimp
-  /etc/ld.so.cache:
-    bind-file: $SNAP_DATA/etc/ld.so.cache
-  /usr/bin/gjs:
-    symlink: $SNAP/gnome-platform/usr/bin/gjs
   /usr/lib/$CRAFT_ARCH_TRIPLET_BUILD_FOR/babl-0.1:
     bind: $SNAP/usr/lib/$CRAFT_ARCH_TRIPLET_BUILD_FOR/babl-0.1
   /usr/lib/$CRAFT_ARCH_TRIPLET_BUILD_FOR/gegl-0.4:
     bind: $SNAP/usr/lib/$CRAFT_ARCH_TRIPLET_BUILD_FOR/gegl-0.4
-  /usr/lib/$CRAFT_ARCH_TRIPLET_BUILD_FOR/evince/4/backends:
-    bind: $SNAP/usr/lib/$CRAFT_ARCH_TRIPLET_BUILD_FOR/evince/4/backends
-  /usr/lib/gvfs:
-    bind: $SNAP/usr/lib/gvfs
-  /usr/lib/$CRAFT_ARCH_TRIPLET_BUILD_FOR/gvfs:
-    bind: $SNAP/usr/lib/$CRAFT_ARCH_TRIPLET_BUILD_FOR/gvfs
-  /usr/lib/$CRAFT_ARCH_TRIPLET_BUILD_FOR/lua:
-    symlink: $SNAP/usr/lib/$CRAFT_ARCH_TRIPLET/lua
-  /usr/libexec:
-    bind: $SNAP/usr/libexec
-  /usr/share/color:
-    bind: $SNAP/usr/share/color
-  /usr/share/ghostscript:
-    bind: $SNAP/usr/share/ghostscript
-  /usr/share/gvfs:
-    bind: $SNAP/usr/share/gvfs
-  /usr/share/lensfun:
-    bind: $SNAP/usr/share/lensfun
   /usr/share/locale:
     bind: $SNAP/usr/share/locale
-  /usr/share/lua:
-    bind: $SNAP/usr/share/lua
-  /usr/share/mypaint-data:
-    bind: $SNAP/usr/share/mypaint-data
 
 slots:
   dbus-gimp:
@@ -59,158 +33,58 @@ slots:
     name: org.gimp.GIMP.UI
 
 environment:
-  GTK_USE_PORTAL: "1"
-  GI_TYPELIB_PATH: $SNAP/gnome-platform/usr/lib/$CRAFT_ARCH_TRIPLET_BUILD_FOR/gjs/girepository-1.0
-  GIMP2_LOCALEDIR: $SNAP/usr/share/locale
+  GI_TYPELIB_PATH: $SNAP/gnome-platform/usr/lib/$CRAFT_ARCH_TRIPLET_BUILD_FOR/gjs/girepository-1.0:$GI_TYPELIB_PATH
   LD_LIBRARY_PATH: $SNAP/lib:$SNAP/lib/$CRAFT_ARCH_TRIPLET_BUILD_FOR:$SNAP/usr/lib:$SNAP/usr/lib/$CRAFT_ARCH_TRIPLET_BUILD_FOR:$SNAP/usr/lib/$CRAFT_ARCH_TRIPLET_BUILD_FOR/lapack:$SNAP/usr/lib/$CRAFT_ARCH_TRIPLET_BUILD_FOR/blas
-  PYTHONHOME: $SNAP/gnome-platform/usr
-  PYTHONPATH: $SNAP/gnome-platform/usr/lib/python3.10
+  # Ensure the gmic plugin can correctly locate the QT plugins
+  QT_PLUGIN_PATH: $SNAP/usr/lib/$CRAFT_ARCH_TRIPLET_BUILD_FOR/qt6/plugins
 
 apps:
   gimp:
     command: usr/bin/gimp-2.99
     extensions: [gnome]
     desktop: usr/share/applications/gimp.desktop
+
     common-id: org.gimp.GIMP
     slots:
       - dbus-gimp
     plugs:
       - cups-control
       - browser-support
-      - desktop
-      - desktop-legacy
-      - gsettings
       - home
       - network
-      - opengl
       - removable-media
       - unity7
-      - wayland
-      - x11
 
 parts:
-  gexiv:
-    plugin: meson
-    source: https://download.gnome.org/sources/gexiv2/0.14/gexiv2-0.14.0.tar.xz
-    source-checksum: sha256/e58279a6ff20b6f64fa499615da5e9b57cf65ba7850b72fafdf17221a9d6d69e
-    meson-parameters:
-      - --prefix=/usr
-      - --buildtype=release
-      - -Db_lto=true
-      - -Dintrospection=false
-      - -Dpython3=false
-      - -Dvapi=false
-    build-environment:
-      - CFLAGS: -Ofast -g -pipe
-      - CXXFLAGS: -Ofast -g -pipe
-    build-packages:
-      - libexiv2-dev
-      - libcodec2-dev
-    stage-packages:
-      - libexiv2-27
-
-  libav:
-    after:
-      - libaom
-    plugin: autotools
-    source: https://ffmpeg.org/releases/ffmpeg-5.1.tar.xz
-    autotools-configure-parameters:
-      - --prefix=/usr
-      - --disable-programs
-      - --disable-doc
-      - --disable-alsa
-      - --enable-gpl
-      - --enable-shared
-      - --enable-libaom
-      - --enable-libfontconfig
-      - --enable-libfreetype
-      - --enable-librsvg
-      - --enable-libv4l2
-      - --enable-libvpx
-      - --enable-libwebp
-      - --enable-libx264
-      - --enable-libx265
-      - --enable-libxvid
-    build-environment:
-      - CFLAGS: -Ofast -g -pipe
-      - CXXFLAGS: -Ofast -g -pipe
-      - PATH: /usr/bin:$PATH
-    build-packages:
-      - to amd64:
-          - libmfx-dev
-      - libbz2-dev
-      - libsdl2-dev
-      - libtheora-dev
-      - libv4l-dev
-      - libva-drm2
-      - libva-x11-2
-      - libva-dev
-      - libvdpau-dev
-      - libvpx-dev
-      - libx264-dev
-      - libx265-dev
-      - libxvidcore-dev
-      - nasm
-    stage-packages:
-      - to amd64:
-          - libmfx1
-      - libbz2-1.0
-      - libsdl2-2.0-0
-      - libtheora0
-      - libv4l-0
-      - libva2
-      - libvdpau1
-      - libvpx7
-      - libx264-163
-      - libx265-199
-      - libxvidcore4
-
-  # https://download.gimp.org/pub/babl
   babl:
     plugin: meson
     source: https://gitlab.gnome.org/GNOME/babl.git
-    # source: https://download.gimp.org/pub/babl/0.1/babl-0.1.92.tar.xz
-    # source-checksum: sha256/f667735028944b6375ad18f160a64ceb93f5c7dccaa9d8751de359777488a2c1
+    # TODO: replace this with a tag on next release
+    source-commit: c5f97c86224a473cc3fea231f17adef84580f2cc
     meson-parameters:
       - --prefix=/usr
       - --buildtype=release
-      - -Db_lto=true
       - -Dwith-docs=false
-    build-environment:
-      - CFLAGS: -Ofast -g -pipe
-      - CXXFLAGS: -Ofast -g -pipe
-    override-pull: |
-      craftctl default
-      sed -i 's/not stable, Description:/not stable, description:/' meson.build
     build-packages:
-      - git
-      - meson
       - w3m
 
-  # https://download.gimp.org/pub/gegl
   gegl:
     after:
       - babl
-      - gexiv
-      - ghostscript
-      - libav
     source: https://gitlab.gnome.org/GNOME/gegl.git
-    # source: https://download.gimp.org/pub/gegl/0.4/gegl-0.4.36.tar.xz
-    # source-checksum: sha256/6fd58a0cdcc7702258adaeffb573a389228ae8f0eff47578efda2309b61b2ca6
+    # TODO: replace this with a tag on next release
+    source-commit: d540df2ad27c06891271d96247f915073b042a3e
     plugin: meson
     meson-parameters:
       - --prefix=/usr
       - --buildtype=release
       - -Ddocs=false
       - -Dworkshop=true
-      - -Db_lto=true
-    build-environment:
-      - CFLAGS: -Ofast -g -pipe
-      - CXXFLAGS: -Ofast -g -pipe
-      - GIO_MODULE_DIR: /snap/gnome-42-2204-sdk/current/usr/lib/$CRAFT_ARCH_TRIPLET_BUILD_FOR/gio/modules
     build-packages:
+      - ffmpeg
       - libexiv2-dev
       - libfftw3-dev
+      - libgexiv2-2
       - libglu1-mesa-dev
       - liblensfun-dev
       - libluajit-5.1-dev
@@ -222,254 +96,46 @@ parts:
       - libsuitesparse-dev
       - libv4l-dev
       - libwebp-dev
-      - meson
     stage-packages:
-      - libamd2
-      - libbtf1
-      - libcamd2
-      - libccolamd2
-      - libcholmod3
-      - libcolamd2
-      - libcxsparse3
+      - ffmpeg
+      - libamd3
+      - libbtf2
+      - libcamd3
+      - libccolamd3
+      - libcholmod5
+      - libcolamd3
+      - libcxsparse4
       - libexiv2-27
-      - libgraphblas6
-      - libklu1
+      - libgexiv2-2
+      - libgraphblas7
+      - libklu2
       - liblapack3
-      - libldl2
+      - libldl3
       - liblensfun1
       - libluajit-5.1-2
       - libmaxflow0
-      - libopenexr25
-      - libraw20
-      - librbio2
+      - libopenexr-3-1-30
+      - libraw-bin
+      - librbio4
       - libsdl2-2.0-0
       - libspiro1
-      - libspqr2
-      - libumfpack5
+      - libspqr4
+      - libumfpack6
       - libv4l-0
 
-  # https://aomedia.googlesource.com
-  libaom:
-    source: https://aomedia.googlesource.com/aom
-    source-type: git
-    source-tag: v3.4.0
-    plugin: cmake
-    build-environment:
-      - CFLAGS: -Ofast -g -pipe -flto
-      - CXXFLAGS: -Ofast -g -pipe -flto
-      - LDFLAGS: -flto
-      - PATH: /usr/bin:$PATH
-    cmake-parameters:
-      - -DCMAKE_BUILD_TYPE=Release
-      - -DCMAKE_INSTALL_PREFIX=/usr
-      - -DENABLE_DOCS=OFF
-      - -DENABLE_EXAMPLES=OFF
-      - -DENABLE_TESTDATA=OFF
-      - -DENABLE_TESTS=OFF
-      - -DCONFIG_PIC=1
-      - -DCONFIG_AV1_ENCODER=1
-      - -DCONFIG_AV1_DECODER=1
-      - -DCONFIG_MULTITHREAD=1
-    build-packages:
-      - yasm
-
-  # https://github.com/strukturag/libheif/releases
-  libheif:
-    after: [libaom]
-    source: https://github.com/strukturag/libheif/releases/download/v1.12.0/libheif-1.12.0.tar.gz
-    plugin: autotools
-    build-environment:
-      - CFLAGS: -Ofast -g -pipe -flto
-      - CXXFLAGS: -Ofast -g -pipe -flto
-      - LDFLAGS: -flto
-      - PATH: /usr/bin:$PATH
-    autotools-configure-parameters:
-      - --prefix=/usr
-      - --disable-go
-      - --disable-examples
-    build-packages:
-      - libde265-dev
-      - libx265-dev
-    stage-packages:
-      - libde265-0
-      - libx265-199
-
-  # https://github.com/mypaint/libmypaint/releases
-  libmypaint:
-    plugin: autotools
-    source: https://github.com/mypaint/libmypaint/releases/download/v1.6.1/libmypaint-1.6.1.tar.xz
-    source-checksum: sha256/741754f293f6b7668f941506da07cd7725629a793108bb31633fb6c3eae5315f
-    build-packages:
-      - intltool
-      - libjson-c-dev
-    autotools-configure-parameters:
-      - --prefix=/usr
-      - --disable-static
-    build-environment:
-      - CFLAGS: -Ofast -g -pipe -flto
-      - CXXFLAGS: -Ofast -g -pipe -flto
-      - LDFLAGS: -flto
-    stage:
-      - -**/*.la
-    prime:
-      - -usr/include
-      - -usr/lib/pkgconfig
-
-  # https://github.com/mypaint/mypaint-brushes/releases
-  mypaint-brushes:
-    after:
-      - libmypaint
-    source: https://github.com/mypaint/mypaint-brushes/releases/download/v1.3.1/mypaint-brushes-1.3.1.tar.xz
-    source-checksum: sha256/fef66ffc241b7c5cd29e9c518e933c739618cb51c4ed4d745bf648a1afc3fe70
-    plugin: autotools
-    autotools-configure-parameters:
-      - --prefix=/usr
-    build-environment:
-      - CFLAGS: -Ofast -g -pipe -flto
-      - CXXFLAGS: -Ofast -g -pipe -flto
-      - LDFLAGS: -flto
-    build-packages:
-      - automake
-
-  # https://github.com/hughsie/appstream-glib
-  appstream-glib:
-    plugin: meson
-    source: https://github.com/hughsie/appstream-glib.git
-    build-environment:
-      - CFLAGS: -Ofast -g -pipe
-      - CXXFLAGS: -Ofast -g -pipe
-    meson-parameters:
-      - --prefix=/usr
-      - --buildtype=release
-      - -Db_lto=true
-      - -Dbuilder=false
-      - -Drpm=false
-      - -Dman=false
-    build-packages:
-      - gperf
-      - libarchive-dev
-      - libstemmer-dev
-      - libyaml-dev
-    stage-packages:
-      - libarchive13
-      - libstemmer0d
-      - libyaml-0-2
-
-  # https://gitlab.gnome.org/GNOME/evince
-  evince:
-    source: https://gitlab.gnome.org/GNOME/evince.git
-    source-type: git
-    source-branch: "gnome-42"
-    plugin: meson
-    build-environment:
-      - CFLAGS: -Ofast -g -pipe -flto
-      - CXXFLAGS: -Ofast -g -pipe -flto
-      - LDFLAGS: -flto
-    meson-parameters:
-      - --prefix=/snap/$SNAPCRAFT_PROJECT_NAME/current/usr
-      - --buildtype=release
-      - -Dnautilus=false
-      - -Dgtk_doc=false
-      - -Dintrospection=false
-    organize:
-      snap/$SNAPCRAFT_PROJECT_NAME/current/usr: usr
-    build-packages:
-      - autotools-dev
-      - dh-apparmor
-      - intltool
-      - libarchive-dev
-      - libdjvulibre-dev
-      - libkpathsea-dev
-      - libsm-dev
-    stage-packages:
-      - libarchive13
-      - libdjvulibre21
-      - libkpathsea6
-      - libnspr4
-
-  # https://github.com/ArtifexSoftware/ghostpdl-downloads
-  ghostscript:
-    plugin: autotools
-    source: https://github.com/ArtifexSoftware/ghostpdl-downloads/releases/download/gs9561/ghostscript-9.56.1.tar.xz
-    build-environment:
-      - CFLAGS: -Ofast -g -pipe -flto
-      - CXXFLAGS: -Ofast -g -pipe -flto
-      - LDFLAGS: -flto
-    autotools-configure-parameters:
-      - --prefix=/usr
-      - --disable-compile-inits
-      - --enable-dynamic
-    override-build: |
-      ./configure \
-        --prefix=/usr \
-        --disable-compile-inits \
-        --enable-dynamic
-      make -j$CRAFT_PARALLEL_BUILD_COUNT
-      make -j$CRAFT_PARALLEL_BUILD_COUNT so
-      make DESTDIR=$CRAFT_PART_INSTALL install
-      make DESTDIR=$CRAFT_PART_INSTALL soinstall
-
-  # https://www.rawtherapee.com/downloads/
-  rawtherapee:
-    source: https://rawtherapee.com/shared/source/rawtherapee-5.8.tar.xz
-    plugin: cmake
-    override-pull: |
-      craftctl default
-      patch -Np1 -i $CRAFT_PROJECT_DIR/snap/local/patches/rawtherapee.patch
-    cmake-parameters:
-      - -DCMAKE_BUILD_TYPE=Release
-      - -DCMAKE_INSTALL_PREFIX=/usr
-      - -DWITH_LTO=ON
-      - -DCACHE_NAME_SUFFIX=""
-    build-environment:
-      - CFLAGS: -O3 -g -pipe
-      - CXXFLAGS: -O3 -g -pipe
-    build-packages:
-      - libiptcdata0-dev
-      - liblensfun-dev
-    stage-packages:
-      - libiptcdata0
-      - liblensfun1
-
-  # https://github.com/caolanm/libwmf
-  libwmf:
-    after: [ghostscript]
-    plugin: autotools
-    source: https://github.com/caolanm/libwmf/archive/refs/tags/v0.2.12.tar.gz
-    override-pull: |
-      craftctl default
-      patch -Np1 -i $CRAFT_PROJECT_DIR/snap/local/patches/libwmf/no-trio.patch
-      patch -Np1 -i $CRAFT_PROJECT_DIR/snap/local/patches/libwmf/freetype-pkg-config.patch
-      autoreconf --force --install --include=patches
-    autotools-configure-parameters:
-      - --prefix=/usr
-      - --with-gsfontmap=/usr/share/ghostscript/9.56.1/Resource/Init/Fontmap.GS
-    build-environment:
-      - CFLAGS: -Ofast -g -pipe -flto
-      - CXXFLAGS: -Ofast -g -pipe -flto
-      - LDFLAGS: -flto
-    override-build: |
-      craftctl default
-      sed -i "s|/usr/lib/libwmflite.la|$CRAFT_STAGE/usr/lib/libwmflite.la|" $CRAFT_PART_INSTALL/usr/lib/libwmf.la
-    stage-packages:
-      - libexpat1
-
-  # https://download.gimp.org/pub/gimp/v2.10/
   gimp:
     after:
-      - appstream-glib
       - babl
-      - evince
       - gegl
-      - gexiv
-      - ghostscript
-      - libheif
-      - libmypaint
-      - libwmf
-      - mypaint-brushes
-      - rawtherapee
     plugin: meson
-    source: https://download.gimp.org/gimp/v2.99/gimp-${SNAPCRAFT_PROJECT_VERSION}.tar.xz
+    source: https://gitlab.gnome.org/GNOME/gimp.git
+    source-commit: a92388c433da868c5d84b14362f7a8151d287ad7
+    override-pull: |
+      # TODO: remove `craftctl default` and use this when 2.99.19 actually releases
+      #   tag="$(echo "GIMP_${SNAPCRAFT_PROJECT_VERSION}" | tr "." "_")"
+      #   git clone -b "$tag" https://gitlab.gnome.org/GNOME/gimp.git
+      craftctl default
+      sed -i 's|^Icon=.*|Icon=/usr/share/icons/hicolor/256x256/apps/gimp.png|' desktop/gimp.desktop.in.in
     meson-parameters:
       - --prefix=/usr
       - --buildtype=release
@@ -478,53 +144,39 @@ parts:
       - -Dbuild-id=org.gimp.GIMP.snapcraft.preview
       - -Dbug-report-url=https://github.com/snapcrafters/gimp/issues/
       - -Dcheck-update=no
-      - -Dpython=enabled
       - -Denable-default-bin=enabled
       - -Drelocatable-bundle=yes
       - -Dlibunwind=true
     build-environment:
-      - CFLAGS: -Ofast -pipe -flto
-      - CXXFLAGS: -Ofast -pipe -flto
-      - LDFLAGS: -flto
       - BABL_PATH: $CRAFT_STAGE/usr/lib/$CRAFT_ARCH_TRIPLET_BUILD_FOR/babl-0.1
       - GEGL_PATH: $CRAFT_STAGE/usr/lib/$CRAFT_ARCH_TRIPLET_BUILD_FOR/gegl-0.4
-      # the LIBRARY_PATH is to fix ld unable to find libwmf
-      - LIBRARY_PATH: $CRAFT_STAGE/usr/lib
-      # the LD_LIBRARY_PATH is to fix configure failing to test for gegl matting-levin support
-      - LD_LIBRARY_PATH: $LD_LIBRARY_PATH:$CRAFT_STAGE/usr/lib/$CRAFT_ARCH_TRIPLET_BUILD_FOR
-      - GIO_MODULE_DIR: /snap/gnome-42-2204-sdk/current/usr/lib/$CRAFT_ARCH_TRIPLET_BUILD_FOR/gio/modules
-      - PYTHON: /usr/bin/python3.10
-    override-pull: |
-      craftctl default
-      sed -i 's|^Icon=.*|Icon=/usr/share/icons/hicolor/256x256/apps/gimp.png|' desktop/gimp.desktop.in.in
-      # TODO: Drop this on next release.
-      # See: https://gitlab.gnome.org/GNOME/gimp/-/commit/11892f1d83ffc465346dab7e2e8c6e790f555a64
-      patch -Np1 -i $CRAFT_PROJECT_DIR/snap/local/patches/gimpchoice-fix.patch
-    override-build: |
-      craftctl default
-      sed -i -E 's|^# \(mypaint-brush-path .*$|(mypaint-brush-path "/usr/share/mypaint-data/1.0/brushes:~/.mypaint/brushes")|' $CRAFT_PART_INSTALL/etc/gimp/2.99/gimprc
+      - GI_TYPELIB_PATH: $CRAFT_STAGE/usr/lib/$CRAFT_ARCH_TRIPLET_BUILD_FOR/girepository-1.0:$GI_TYPELIB_PATH
+      - LD_LIBRARY_PATH: $LD_LIBRARY_PATH:$CRAFT_STAGE/usr/lib:$CRAFT_STAGE/usr/lib/$CRAFT_ARCH_TRIPLET_BUILD_FOR
     build-packages:
       - automake
       - intltool
       - iso-codes
       - libaa1-dev
+      - libappstream-glib-dev
       - libart-2.0-dev
       - libbz2-dev
+      - libcairo-gobject2
       - libexif-dev
       - libexpat1-dev
       - libfftw3-dev
+      - libgexiv2-2
       - libgpm-dev
       - libice-dev
-      - libilmbase-dev
-      - libisocodes-dev
       - libluajit-5.1-dev
       - liblzma-dev
       - libmng-dev
+      - libmypaint-dev
       - libopenexr-dev
       - libslang2-dev
       - libsm-dev
       - libunwind-dev
       - libwebp-dev
+      - libwmf-dev
       - libxmu-dev
       - libxpm-dev
       - luajit
@@ -532,36 +184,45 @@ parts:
       - xdg-utils
       - xsltproc
     stage-packages:
+      - evince
+      - ghostscript
       - iso-codes
       - libaa1
+      - libappstream-glib8
       - libart-2.0-2
       - libbz2-1.0
       - libexif12
-      - libfftw3-3
+      - libfftw3-bin
+      - libgexiv2-dev
       - libgpm2
-      - libilmbase25
+      - libheif1
       - libluajit-5.1-2
       - liblzma5
       - libmng2
-      - libopenexr25
+      - libmypaint-1.5-1
+      - libmypaint-common
+      - libopenexr-3-1-30
       - libslang2
       - libsndio7.0
       - libunwind8
       - libwebp7
       - libwebpdemux2
       - libwebpmux3
+      - libwmf-0.2-7
       - libxmu6
       - libxpm4
       - libxv1
       - lua-lgi
       - luajit
+      - mypaint-brushes
+      - mypaint-data
       - poppler-data
 
   gmic:
     after: [gimp]
     plugin: nil
     override-pull: |
-      VERSION=v.3.3.4
+      VERSION=v.3.4.2
       git clone -b "$VERSION" https://github.com/GreycLab/gmic.git
       git clone -b "$VERSION" https://github.com/GreycLab/CImg.git
       git clone -b "$VERSION" https://github.com/c-koi/gmic-qt.git
@@ -571,38 +232,9 @@ parts:
       # the build phase, by the time we get there the proxy token has
       # expired - so force it to happen here.
       wget -qO gmic/src/gmic_stdlib_community.h "https://gmic.eu/gmic_stdlib_community$(echo "${VERSION}" | tr -d "v.").h"
-
-      # TODO: This can potentially be dropped after the next release of gmic-qt
-      pushd gmic-qt
-      patch -Np1 -i $CRAFT_PROJECT_DIR/snap/local/patches/gmic-gimp-image-procedure-new-cast.patch
-      popd
     build-environment:
-      - LD_LIBRARY_PATH: $CRAFT_STAGE/usr/lib:$CRAFT_STAGE/usr/lib/$CRAFT_ARCH_TRIPLET_BUILD_FOR
-      - PATH: /snap/bin:$PATH
-      - PKG_CONFIG_PATH: $CRAFT_STAGE/usr/lib/$CRAFT_ARCH_TRIPLET_BUILD_FOR/pkgconfig:${PKG_CONFIG_PATH:+:$PKG_CONFIG_PATH}
       - QT_SELECT: qt6
-      - CFLAGS: -Ofast -g -pipe -flto
-      - CXXFLAGS: -Ofast -g -pipe -flto
-      - LDFLAGS: -flto
     build-packages:
-      - curl
-      - g++
-      - gcc
-      - libcurl4-openssl-dev
-      - libffi7
-      - libfftw3-dev
-      - libgraphicsmagick++1-dev
-      - libgraphicsmagick1-dev
-      - libjpeg-dev
-      - libopencv-core-dev
-      - libopencv-highgui-dev
-      - libopencv-videoio-dev
-      - libopenexr-dev
-      - libpng-dev
-      - libtiff5-dev
-      - libxkbfile-dev
-      - libxres-dev
-      - make
       - pkg-config
       - qmake6-bin
       - qt6-base-dev
@@ -611,51 +243,29 @@ parts:
       - qt6-wayland-dev
       - qtchooser
       - wget
-      - zlib1g-dev
-    override-build: |
-      qtchooser -install qt6 $(which qmake6) || true
-      make -C gmic/src CImg.h gmic_stdlib_community.h
-      cd gmic-qt
-      qmake HOST=gimp3
-      make -j$SNAPCRAFT_PARALLEL_BUILD_COUNT
-      make DESTDIR=$SNAPCRAFT_PART_INSTALL install
     stage-packages:
       - libcurl4
       - libdouble-conversion3
-      - libfftw3-3
-      - libffi7
+      - libfftw3-bin
+      - libffi8
       - libgraphicsmagick-q16-3
       - libgraphicsmagick++-q16-12
       - libjpeg-turbo8
-      - libopencv-core4.5d
-      - libopencv-highgui4.5d
-      - libopencv-videoio4.5d
-      - libopenexr25
+      - libopencv-core406t64
+      - libopencv-highgui406t64
+      - libopencv-video406t64
+      - libopenexr-3-1-30
       - libpng16-16
-      - libqt6core6
-      - libqt6gui6
-      - libqt6network6
-      - libqt6widgets6
-      - libtiff5
-      - libxkbfile1
-      - libxres1
+      - libqt6core6t64
+      - libqt6gui6t64
+      - libqt6network6t64
+      - libqt6widgets6t64
       - qt6-wayland
-      - zlib1g
-
-  cleanup:
-    after: [gimp, gmic]
-    plugin: nil
-    build-snaps:
-      - core22
-      - gnome-42-2204
-      - gtk-common-themes
-    override-prime: |
-      set -eux
-      for snap in "gnome-42-2204" "gtk-common-themes"; do  # List all content-snaps you're using here
-        cd "/snap/$snap/current" && find . -type f,l -not -path "./usr/share/xml/iso-codes/*" -exec rm -f "$CRAFT_PRIME/{}" \;
-      done
-      for CRUFT in bug lintian man; do
-        rm -rf $CRAFT_PRIME/usr/share/$CRUFT
-      done
-      find $CRAFT_PRIME/usr/share/doc/ -type f -not -name 'copyright' -delete
-      find $CRAFT_PRIME/usr/share -type d -empty -delete
+    override-build: |
+      qtchooser -install qt6 "$(which qmake6)" || true
+      make -C gmic/src CImg.h gmic_stdlib_community.h
+      cd gmic-qt
+      qmake HOST=gimp3
+      make
+      install -Dm 0755 $CRAFT_PART_BUILD/gmic-qt/gmic_gimp_qt \
+        $CRAFT_PART_INSTALL/usr/lib/$CRAFT_ARCH_TRIPLET_BUILD_FOR/gimp/3.0/plug-ins/gmic_gimp_qt/gmic_gimp_qt
