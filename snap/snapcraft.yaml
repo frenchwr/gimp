@@ -240,7 +240,7 @@ parts:
       - poppler-data
     override-stage: |
       # fix gimp python interpreters file
-      cat <<EOF > $CRAFT_PART_INSTALL/usr/lib/x86_64-linux-gnu/gimp/2.99/interpreters/pygimp.interp
+      cat <<EOF > $CRAFT_PART_INSTALL/usr/lib/$CRAFT_ARCH_TRIPLET_BUILD_FOR/gimp/2.99/interpreters/pygimp.interp
       python=/snap/"${SNAPCRAFT_PROJECT_NAME}"/current/usr/bin/python3
       python3=/snap/"${SNAPCRAFT_PROJECT_NAME}"/current/usr/bin/python3
       /usr/bin/python=/snap/"${SNAPCRAFT_PROJECT_NAME}"/current/usr/bin/python3
