@@ -82,22 +82,29 @@ Now that your git metadata has been updated you are ready to create a bugfix bra
 
 This snap contains support for AI plugins running on Intel hardware (CPU, GPU, and NPU) using Intel's OpenVINO AI inference library. In order to use these plugins, please follow these steps:
 
-1. Build and install the OpenVINO-enabled GIMP snap locally as it is not currently published:
+
+1. Install the plugin dependencies, which provide runtime libraries and the GIMP plugins:
+
+    ```shell
+    sudo snap install intel-npu-driver --beta # for NPU support
+    sudo snap install openvino-toolkit-2404 --beta
+    sudo snap install openvino-ai-plugins-gimp --beta
+    ```
+
+2. Install the OpenVINO-enabled GIMP snap:
+
+    If you want to try the latest published version from the Snap Store use the following command:
+
+    ```shell
+    sudo snap install gimp --channel=2.99-openvino/beta
+    ```
+
+    If instead you wish to build the snap yourself for local development, use the following commands:
 
     ```shell
     cd gimp
     snapcraft
     sudo snap install --dangerous ./gimp_2.99.16_amd64.snap
-    ```
-
-    **TODO**: publish the snap under a new track in the store (e.g. `sudo snap install gimp --channel=openvino-ai-plugins/beta`).
-
-2. Install the content provider snaps that provide runtime libraries and the GIMP plugins:
-
-    ```shell
-    sudo snap install intel-npu-driver --beta # for NPU support
-    sudo snap install openvino-toolkit-2404 --beta
-    sudo snap install openvino-ai-plugins-gimp --edge
     ```
 
 3. Connect snap interfaces:
@@ -108,8 +115,6 @@ This snap contains support for AI plugins running on Intel hardware (CPU, GPU, a
     sudo snap connect gimp:openvino-libs openvino-toolkit-2404:openvino-libs
     sudo snap connect gimp:openvino-ai-plugins-gimp-libs openvino-ai-plugins-gimp:openvino-ai-plugins-gimp-libs
     ```
-
-    **TODO**: request autoconnections from the Snap Store.
 
 4. (Optional) Install stable diffusion models. Models for the other plugins are relatively small so are built into the snap, while the stable diffusion models are each on the order of GBs and therefore downloaded to a user's home directory via a `model-setup` command line tool.
 
@@ -129,8 +134,6 @@ This snap contains support for AI plugins running on Intel hardware (CPU, GPU, a
     ```
 
     Note this will install models in your home directory at `~/openvino-ai-plugins-gimp`. To adjust the path set the `GIMP_OPENVINO_MODELS_PATH` shell variable to a different non-hidden location in your home directory.
-
-    **TODO**: request autoconnections from the Snap Store.
 
 5. Run `gimp` like normal. Instructions for using the OpenVINO AI plugins within GIMP can be found in the [upstream GitHub repo](https://github.com/intel/openvino-ai-plugins-gimp).
 
