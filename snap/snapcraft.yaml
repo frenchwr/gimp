@@ -48,6 +48,10 @@ plugs:
     interface: content
     content: openvino-ai-plugins-gimp-2404
     target: $SNAP/openvino-ai-plugins-gimp
+  dot-local-share-openvino-ai-plugins-gimp:
+    interface: personal-files
+    write:
+      - $HOME/.local/share/openvino-ai-plugins-gimp
 
 environment:
   GI_TYPELIB_PATH: $SNAP/gnome-platform/usr/lib/$CRAFT_ARCH_TRIPLET_BUILD_FOR/gjs/girepository-1.0:$GI_TYPELIB_PATH
@@ -75,6 +79,7 @@ apps:
       - npu-libs
       - openvino-libs
       - openvino-ai-plugins-gimp-libs
+      - dot-local-share-openvino-ai-plugins-gimp
 
 parts:
   babl:
@@ -265,7 +270,7 @@ parts:
     plugin: dump
     source-type: git
     source: https://github.com/canonical/openvino-ai-plugins-gimp-snap.git
-    source-branch: frenchwr/create-snap # TODO: update to stable branch
+    source-branch: main
     stage:
       - command-chain/openvino-ai-plugins-gimp-launch
 

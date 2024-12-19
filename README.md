@@ -114,26 +114,16 @@ This snap contains support for AI plugins running on Intel hardware (CPU, GPU, a
     sudo snap connect gimp:npu-libs intel-npu-driver:npu-libs
     sudo snap connect gimp:openvino-libs openvino-toolkit-2404:openvino-libs
     sudo snap connect gimp:openvino-ai-plugins-gimp-libs openvino-ai-plugins-gimp:openvino-ai-plugins-gimp-libs
+    sudo snap connect gimp:dot-local-share-openvino-ai-plugins-gimp
     ```
 
-4. (Optional) Install stable diffusion models. Models for the other plugins are relatively small so are built into the snap, while the stable diffusion models are each on the order of GBs and therefore downloaded to a user's home directory via a `model-setup` command line tool.
-
-    First connect the snap interfaces for the `model-setup` application:
-
-    ```shell
-    sudo snap connect openvino-ai-plugins-gimp:home
-    sudo snap connect openvino-ai-plugins-gimp:openvino-libs openvino-toolkit-2404:openvino-libs
-    sudo snap connect openvino-ai-plugins-gimp:intel-npu intel-npu-driver:intel-npu
-    sudo snap connect openvino-ai-plugins-gimp:npu-libs intel-npu-driver:npu-libs
-    ```
-
-    Now run the application:
+4. (Optional) Install stable diffusion models. Models for the other plugins are relatively small so are built into the snap, while the stable diffusion models are each on the order of GBs and therefore downloaded to a user's home directory at `~/.local/share/openvino-ai-plugins-gimp` via one of two methods: a `model-setup` command-line tool or from within the GIMP application. To run the interactive command-line tool:
 
     ```shell
     openvino-ai-plugins-gimp.model-setup
     ```
 
-    Note this will install models in your home directory at `~/openvino-ai-plugins-gimp`. To adjust the path set the `GIMP_OPENVINO_MODELS_PATH` shell variable to a different non-hidden location in your home directory.
+    Alternatively, users may download models from within GIMP by clicking "Model" in the top-left of the stable diffusion dialog window (Layer -> OpenVINO-AI-Plugins -> Stable Diffusion).
 
 5. Run `gimp` like normal. Instructions for using the OpenVINO AI plugins within GIMP can be found in the [upstream GitHub repo](https://github.com/intel/openvino-ai-plugins-gimp).
 
