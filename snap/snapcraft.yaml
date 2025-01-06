@@ -70,7 +70,7 @@ parts:
     after:
       - babl
     source: https://github.com/GNOME/gegl.git
-    source-tag: GEGL_0_4_50
+    source-tag: GEGL_0_4_52
     plugin: meson
     meson-parameters:
       - --prefix=/usr
@@ -84,6 +84,7 @@ parts:
       - libexiv2-dev
       - libfftw3-dev
       - libgexiv2-2
+      - libglib2.0-dev
       - libglu1-mesa-dev
       - liblensfun-dev
       - libluajit-5.1-dev
