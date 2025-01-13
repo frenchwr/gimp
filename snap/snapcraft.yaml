@@ -59,8 +59,10 @@ environment:
   # Ensure the gmic plugin can correctly locate the QT plugins
   QT_PLUGIN_PATH: $SNAP/usr/lib/$CRAFT_ARCH_TRIPLET_BUILD_FOR/qt6/plugins
   GIMP3_LOCALEDIR: $SNAP/usr/share/locale
-  LUA_PATH: $SNAP/usr/share/lua/5.1/?.lua;$SNAP/usr/share/lua/5.1/lgi/?.lua;$SNAP/usr/share/lua/5.1/lgi/override/?.lua
-  LUA_CPATH: $SNAP/usr/lib/x86_64-linux-gnu/lua/5.1/?.so
+  # Lua goat exercise considered unstable upstream: https://gitlab.gnome.org/GNOME/gimp/-/commit/78665ca3723f723ac313fdaeef5b62d41ab6b48d
+  # The extension will fail on GIMP startup but commenting these lines avoids the risk of a nasty crash loop
+  #LUA_PATH: $SNAP/usr/share/lua/5.1/?.lua;$SNAP/usr/share/lua/5.1/lgi/?.lua;$SNAP/usr/share/lua/5.1/lgi/override/?.lua
+  #LUA_CPATH: $SNAP/usr/lib/x86_64-linux-gnu/lua/5.1/?.so
 
 apps:
   gimp:
