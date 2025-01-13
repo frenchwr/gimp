@@ -44,6 +44,8 @@ apps:
     extensions: [gnome]
     desktop: usr/share/applications/gimp.desktop
     common-id: org.gimp.GIMP
+    environment:
+      HOME: $SNAP_REAL_HOME
     slots:
       - dbus-gimp
     plugs:
