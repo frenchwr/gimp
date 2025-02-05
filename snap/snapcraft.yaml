@@ -279,7 +279,7 @@ parts:
     plugin: dump
     source-type: git
     source: https://github.com/canonical/openvino-toolkit-snap.git
-    source-tag: 2024.6.0-2
+    source-tag: 2024.6.0-4
     stage:
       - command-chain/openvino-launch
     override-stage: |
@@ -292,7 +292,7 @@ parts:
     plugin: dump
     source-type: git
     source: https://github.com/canonical/openvino-ai-plugins-gimp-snap.git
-    source-branch: 3.0.0-1
+    source-branch: 3.0.0-2
     stage:
       - command-chain/openvino-ai-plugins-gimp-launch
     override-stage: |
