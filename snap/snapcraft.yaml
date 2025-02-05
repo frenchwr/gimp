@@ -282,6 +282,11 @@ parts:
     source-tag: 2024.6.0-2
     stage:
       - command-chain/openvino-launch
+    override-stage: |
+      if [ $(uname -m) != "x86_64" ]; then
+        echo 'exec "$@"' > ${CRAFT_PART_INSTALL}/command-chain/openvino-launch
+      fi
+      craftctl default
 
   command-chain-openvino-ai-plugins-gimp:
     plugin: dump
@@ -290,6 +295,11 @@ parts:
     source-branch: 3.0.0-1
     stage:
       - command-chain/openvino-ai-plugins-gimp-launch
+    override-stage: |
+      if [ $(uname -m) != "x86_64" ]; then
+        echo 'exec "$@"' > ${CRAFT_PART_INSTALL}/command-chain/openvino-ai-plugins-gimp-launch
+      fi
+      craftctl default
 
   gmic:
     after: [gimp]
