@@ -80,7 +80,10 @@ Now that your git metadata has been updated you are ready to create a bugfix bra
 
 ## OpenVINO™ AI Plugins
 
-This snap contains support for AI plugins running on Intel (CPU, GPU, and NPU) and arm64-based hardware using Intel's OpenVINO AI inference library. In order to use these plugins, please follow these steps:
+> [!IMPORTANT]
+> These plugins are only supported on Intel hardware. The stable diffusion plugin requires an Intel GPU (integrated or discrete) and/or Intel NPU. The super resolution and semantic segmentation plugins will run on an Intel CPU, GPU, or NPU.
+
+This snap contains support for AI plugins using Intel's OpenVINO AI inference library. In order to use these plugins, please follow these steps:
 
 
 1. **Install the plugins and their dependencies**:
@@ -93,7 +96,7 @@ This snap contains support for AI plugins running on Intel (CPU, GPU, and NPU) a
 
 2. **(Optional) Enable Intel NPU and GPU acceleration**:
 
-    If you are running on a machine equipped with an Intel neural processing unit (NPU) or graphics processing unit (GPU), ensure you have permissions to use these devices by adding yourself to the `render` Unix group:
+    If you are running on a machine (e.g. a laptop or desktop containing an Intel Core Ultra processor) equipped with an Intel neural processing unit (NPU) or graphics processing unit (GPU), ensure you have permissions to use these devices by adding yourself to the `render` Unix group:
 
     ```shell
     sudo usermod -a -G render $USER
